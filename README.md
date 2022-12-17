@@ -10,7 +10,7 @@ $ pip install mds_jl6276_finalproject
 
 ## Usage
 
-- TODO
+- For users that want to see restaurants available in NYC based on their tastes, this package is useful to do that. By simply type a term (category of flavor), you can get a map that show restaurants' names and locations in NYC. The source is from Yelp reviews dataset. 
 
 ## Contributing
 
