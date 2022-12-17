@@ -1,0 +1,304 @@
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mds_jl6276_finalproject</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># !pip install folium</span>
+<span class="c1"># !pip install requests</span>
+<span class="c1"># !pip install configparser</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="I-used-a-function-to-export-repetitive-or-difficult-tasks.-By-using-this-function,-when-users-put-the-term-(eg:-a-type-of-food),-they-can-automatically-get-the-map-that-show-restaurants'-names-and-locations-on-a-map.-If-users-type-the-term-not-within-the-category,-there-will-be-an-error">I used a function to export repetitive or difficult tasks. By using this function, when users put the term (eg: a type of food), they can automatically get the map that show restaurants' names and locations on a map. If users type the term not within the category, there will be an error<a class="anchor-link" href="#I-used-a-function-to-export-repetitive-or-difficult-tasks.-By-using-this-function,-when-users-put-the-term-(eg:-a-type-of-food),-they-can-automatically-get-the-map-that-show-restaurants'-names-and-locations-on-a-map.-If-users-type-the-term-not-within-the-category,-there-will-be-an-error">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">folium</span>
+<span class="kn">from</span> <span class="nn">folium.plugins</span> <span class="kn">import</span> <span class="n">MarkerCluster</span>
+<span class="k">def</span> <span class="nf">get_map</span><span class="p">(</span><span class="n">term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display user specified location on map in New York.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    term: A category, can be &#39;Spanish&#39;, &#39;bars&#39;, &#39;restaurant&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Location of the user&#39;s search in New York City shown on map.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from mds_jl6276_finalproject import mds_jl6276_finalproject</span>
+<span class="sd">    &gt;&gt;&gt; m = get_map(&#39;spanish&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; m</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">api_key</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer &quot;</span> <span class="o">+</span> <span class="n">api_key</span>
+    <span class="p">}</span>
+    <span class="c1"># Set the base URL for the Yelp API</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;https://api.yelp.com/v3/businesses/search&#39;</span>
+
+    <span class="c1"># Set the parameters for the API request</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="s1">&#39;restaurant&#39;</span> <span class="p">,</span> <span class="c1"># search for restaurants</span>
+        <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;New York&#39;</span> <span class="p">,</span><span class="c1"># in New York</span>
+        <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">50</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="c1"># Get the list of businesses from the response</span>
+    <span class="n">businesses</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;businesses&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Append the results for the current restaurant to the results list</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">businesses</span><span class="p">)</span>
+
+    <span class="c1"># Iterate over a list of restaurant names</span>
+    <span class="k">for</span> <span class="n">terms</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;restaurant&#39;</span><span class="p">,</span> <span class="s1">&#39;cocktailbar&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">]:</span>
+        <span class="c1"># Set the &#39;term&#39; parameter to the current restaurant name</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;term&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">terms</span>
+        <span class="k">for</span> <span class="n">place</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;New York&#39;</span><span class="p">,</span><span class="s1">&#39;long island city&#39;</span><span class="p">,</span> <span class="s1">&#39;jersey city&#39;</span><span class="p">]:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">place</span>
+
+            <span class="c1"># Make the API request</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+            <span class="c1"># Get the list of businesses from the response</span>
+            <span class="n">businesses</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;businesses&#39;</span><span class="p">]</span>
+
+            <span class="c1"># Append the results for the current restaurant to the results list</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">businesses</span><span class="p">),</span><span class="n">df</span><span class="p">])</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;categories&#39;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">):</span>
+            <span class="n">categories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;categories&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;alias&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">categories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;categories&#39;</span><span class="p">])</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">categories2</span> <span class="o">=</span> <span class="n">categories</span><span class="p">)</span>
+    <span class="n">looking_for</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;categories2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">term</span><span class="p">]</span>
+    
+        <span class="c1"># Create a map centered on New York City</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="mf">40.7128</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.0060</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+
+    <span class="c1"># Create a marker cluster object</span>
+    <span class="n">marker_cluster</span> <span class="o">=</span> <span class="n">MarkerCluster</span><span class="p">()</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="c1"># Add a marker for each business</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">looking_for</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">folium</span><span class="o">.</span><span class="n">Marker</span><span class="p">(</span>
+            <span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">looking_for</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="n">looking_for</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">]],</span><span class="n">popup</span><span class="o">=</span><span class="n">looking_for</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">marker_cluster</span><span class="p">)</span>
+
+    <span class="c1"># Display the map</span>
+    <span class="k">if</span> <span class="n">looking_for</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">m</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_map</span><span class="p">(</span><span class="s1">&#39;spanish&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[52]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
+    
+            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
+            &lt;style&gt;
+                #map_c713ae8beeab30bc395454615d96233c {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css&quot;/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_c713ae8beeab30bc395454615d96233c&quot; &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_c713ae8beeab30bc395454615d96233c = L.map(
+                &quot;map_c713ae8beeab30bc395454615d96233c&quot;,
+                {
+                    center: [40.7128, -74.006],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 11,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_8805bc3ea4b3e9386865d55ee6763dc8 = L.tileLayer(
+                &quot;https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
+                {&quot;attribution&quot;: &quot;Data by \u0026copy; \u003ca target=\&quot;_blank\&quot; href=\&quot;http://openstreetmap.org\&quot;\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\&quot;_blank\&quot; href=\&quot;http://www.openstreetmap.org/copyright\&quot;\u003eODbL\u003c/a\u003e.&quot;, &quot;detectRetina&quot;: false, &quot;maxNativeZoom&quot;: 18, &quot;maxZoom&quot;: 18, &quot;minZoom&quot;: 0, &quot;noWrap&quot;: false, &quot;opacity&quot;: 1, &quot;subdomains&quot;: &quot;abc&quot;, &quot;tms&quot;: false}
+            ).addTo(map_c713ae8beeab30bc395454615d96233c);
+        
+    
+            var marker_cluster_79074ce30fdf922c62afca1637274401 = L.markerClusterGroup(
+                {}
+            );
+            map_c713ae8beeab30bc395454615d96233c.addLayer(marker_cluster_79074ce30fdf922c62afca1637274401);
+        
+    
+            var marker_b9d3c03441e3e63d6b5f4dcfcb51748f = L.marker(
+                [40.75833, -73.92794],
+                {}
+            ).addTo(marker_cluster_79074ce30fdf922c62afca1637274401);
+        
+    
+        var popup_6789a9825370cb30cf15b1b0fa46bdb5 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_6477afb85fbfa31f3a6d710c42761c2a = $(`&lt;div id=&quot;html_6477afb85fbfa31f3a6d710c42761c2a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;Sala Astoria&lt;/div&gt;`)[0];
+                popup_6789a9825370cb30cf15b1b0fa46bdb5.setContent(html_6477afb85fbfa31f3a6d710c42761c2a);
+            
+        
+
+        marker_b9d3c03441e3e63d6b5f4dcfcb51748f.bindPopup(popup_6789a9825370cb30cf15b1b0fa46bdb5)
+        ;
+
+        
+    
+    
+            var marker_50c37411c2b4b23097a086dc75ae0ac5 = L.marker(
+                [40.7249227818105, -74.00215536627918],
+                {}
+            ).addTo(marker_cluster_79074ce30fdf922c62afca1637274401);
+        
+    
+        var popup_bcb4dc26ecd944f67612374f951ded25 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_ef5c24227ce3f7e19554c8121c5d770e = $(`&lt;div id=&quot;html_ef5c24227ce3f7e19554c8121c5d770e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;Boqueria Soho&lt;/div&gt;`)[0];
+                popup_bcb4dc26ecd944f67612374f951ded25.setContent(html_ef5c24227ce3f7e19554c8121c5d770e);
+            
+        
+
+        marker_50c37411c2b4b23097a086dc75ae0ac5.bindPopup(popup_bcb4dc26ecd944f67612374f951ded25)
+        ;
+
+        
+    
+    
+            var marker_7550983fff4a4bbf159a63b998346729 = L.marker(
+                [40.7249227818105, -74.00215536627918],
+                {}
+            ).addTo(marker_cluster_79074ce30fdf922c62afca1637274401);
+        
+    
+        var popup_1a6ac27d609b99ac4ff1a62420be2b33 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_5ca2aa9a9d1a4d4d08b37d912ced50e4 = $(`&lt;div id=&quot;html_5ca2aa9a9d1a4d4d08b37d912ced50e4&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;Boqueria Soho&lt;/div&gt;`)[0];
+                popup_1a6ac27d609b99ac4ff1a62420be2b33.setContent(html_5ca2aa9a9d1a4d4d08b37d912ced50e4);
+            
+        
+
+        marker_7550983fff4a4bbf159a63b998346729.bindPopup(popup_1a6ac27d609b99ac4ff1a62420be2b33)
+        ;
+
+        
+    
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+ 
+
