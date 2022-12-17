@@ -25,13 +25,13 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 `mds_jl6276_finalproject` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).
 # MDS_finalproject
 
-# Folder Structure
+## Folder Structure
 
-## src
-### This folder contains the orginal final project file "FinalProjectJinLiu.ipynb" that include process of data acquisition, cleaning, manipulation, visualization, etc. These are preparation steps for building the function. It includes the file in  "ipynb". Another file of "mds_jl6276_finalproject.py" includes the function of get_map and a docstring to explain its' usage. 
+### src
+#### This folder contains the orginal final project file "FinalProjectJinLiu.ipynb" that include process of data acquisition, cleaning, manipulation, visualization, etc. These are preparation steps for building the function. It includes the file in  "ipynb". Another file of "mds_jl6276_finalproject.py" includes the function of get_map and a docstring to explain its' usage. 
 
-## docs
-### This folder includes a vignette with an example on how to use this function to get a map. 
+### docs
+#### This folder includes a vignette with an example on how to use this function to get a map. 
 
-## tests
-### This folder includes a test file in python that test whether the function work correctly by comparing between expected and actual. 
+### tests
+#### This folder includes a test file in python that test whether the function work correctly by comparing between expected and actual. 
